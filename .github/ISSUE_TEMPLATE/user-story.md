@@ -1,7 +1,7 @@
 ---
 name: User Story
 about: Шаблон за описване на потребителска история
-title: "[Роля] – [Действие]"
+title: 'US-[XX]: [Роля] – [Действие]'
 labels: user story
 assignees: ''
 
