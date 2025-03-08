@@ -1,6 +1,6 @@
 {
     "azureFunctions.javaBuildTool": "maven",
-    "azureFunctions.deploySubpath": "target/azure-functions/gift-finder-1739717637324",
+    "azureFunctions.deploySubpath": "gift-finder/target/azure-functions/gift-finder-1739717637324",
     "azureFunctions.projectLanguage": "Java",
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",

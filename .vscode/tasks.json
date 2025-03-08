@@ -8,7 +8,7 @@
 			"problemMatcher": "$func-java-watch",
 			"isBackground": true,
 			"options": {
-				"cwd": "${workspaceFolder}/target/azure-functions/gift-finder-1739717637324"
+				"cwd": "${workspaceFolder}/gift-finder/target/azure-functions/gift-finder-1739717637324"
 			},
 			"dependsOn": "package (functions)"
 		},
@@ -19,6 +19,9 @@
 			"group": {
 				"kind": "build",
 				"isDefault": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}/gift-finder"
 			}
 		}
 	]
