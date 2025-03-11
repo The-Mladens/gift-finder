@@ -1,6 +1,7 @@
 # Build output
 target/
 *.class
+backend/target/
 
 # Log file
 *.log
