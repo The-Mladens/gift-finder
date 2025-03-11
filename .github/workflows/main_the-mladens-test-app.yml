@@ -40,7 +40,6 @@ jobs:
         id: fa
         with:
           app-name: 'the-mladens-gift-finder'
-          slot-name: 'Production'
           package: '${{ env.PACKAGE_DIRECTORY }}'
           respect-pom-xml: true
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FAF33A5332346F9956039D5DC8A9002 }}
