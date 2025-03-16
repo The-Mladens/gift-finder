@@ -50,7 +50,7 @@ jobs:
         id: fa
         with:
           app-name: 'the-mladens-gift-finder'
-          slot-name: 'Production'
+          slot-name: 'dev'
           package: '${{ env.PACKAGE_DIRECTORY }}'
           respect-pom-xml: true
           

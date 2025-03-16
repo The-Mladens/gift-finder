@@ -92,6 +92,7 @@
                         </property>
                     </appSettings>
                     <deploymentSlot>dev</deploymentSlot> <!-- Деплой в dev slot -->
+                    <deploymentType>zip</deploymentType>
                 </configuration>
                 <executions>
                     <execution>
