@@ -91,6 +91,7 @@
                             <value>~4</value>
                         </property>
                     </appSettings>
+                    <deploymentSlot>dev</deploymentSlot> <!-- Деплой в dev slot -->
                 </configuration>
                 <executions>
                     <execution>
