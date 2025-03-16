@@ -6,7 +6,7 @@ name: Build and deploy Java project to Azure Function App - the-mladens-gift-fin
 on:
   push:
     branches:
-      - dev
+      - main
   workflow_dispatch:
 
 env:
@@ -50,7 +50,7 @@ jobs:
         id: fa
         with:
           app-name: 'the-mladens-gift-finder'
-          slot-name: 'dev'
+          slot-name: 'Production'
           package: '${{ env.PACKAGE_DIRECTORY }}'
           respect-pom-xml: true
           
