@@ -33,13 +33,15 @@ public class Function {
         final String query = request.getQueryParameters().get("name");
         final String name = request.getBody().orElse(query);
 
-        final String passQuery = request.getQueryParameters().get("pass");
-        final String passString = request.getBody().orElse(passQuery);
+        final String secretKeyQuery = request.getQueryParameters().get("sk");
+        final String secretKey = request.getBody().orElse(secretKeyQuery);
+
+        String mySecretKey = System.getenv("MY_SECRET_KEY");
 
         // Сравняваме правилно с .equals()
-        if (!"the-mladens-123".equals(passString)) {
+        if (!mySecretKey.equals(secretKey)) {
             return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
-                    .body("No Password!!!")
+                    .body("Error 101")
                     .build();
         }
 
