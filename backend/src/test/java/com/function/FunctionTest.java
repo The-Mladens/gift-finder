@@ -28,7 +28,12 @@ public class FunctionTest {
 
         final Map<String, String> queryParams = new HashMap<>();
         queryParams.put("name", "Azure");
-        queryParams.put("pass", "the-mladens-123");
+
+        String mySecretKey = System.getenv("MY_SECRET_KEY");
+        mySecretKey = Objects.requireNonNullElse(mySecretKey, "test-key");
+
+        queryParams.put("sk", mySecretKey);
+
         doReturn(queryParams).when(req).getQueryParameters();
 
         final Optional<String> queryBody = Optional.empty();

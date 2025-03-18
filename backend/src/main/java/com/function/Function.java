@@ -10,6 +10,7 @@ import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -37,6 +38,7 @@ public class Function {
         final String secretKey = request.getBody().orElse(secretKeyQuery);
 
         String mySecretKey = System.getenv("MY_SECRET_KEY");
+        mySecretKey = Objects.requireNonNullElse(mySecretKey, "test-key");
 
         // Сравняваме правилно с .equals()
         if (!mySecretKey.equals(secretKey)) {
