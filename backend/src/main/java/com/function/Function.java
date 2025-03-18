@@ -25,7 +25,7 @@ public class Function {
     @FunctionName("HttpExample")
     public HttpResponseMessage run(
             @HttpTrigger(name = "req", methods = { HttpMethod.GET,
-                    HttpMethod.POST }, authLevel = AuthorizationLevel.ADMIN) HttpRequestMessage<Optional<String>> request,
+                    HttpMethod.POST }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
 
@@ -37,11 +37,11 @@ public class Function {
         final String passString = request.getBody().orElse(passQuery);
 
         // Сравняваме правилно с .equals()
-        // if (!"the-mladens-123".equals(passString)) {
-        //     return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
-        //             .body("No Password!!!")
-        //             .build();
-        // }
+        if (!"the-mladens-123".equals(passString)) {
+            return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+                    .body("No Password!!!")
+                    .build();
+        }
 
         if (name == null) {
             return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
