@@ -9,6 +9,7 @@ import com.microsoft.azure.functions.annotation.AuthorizationLevel;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
@@ -25,7 +26,7 @@ public class Function {
             @HttpTrigger(
                 name = "req",
                 methods = {HttpMethod.GET, HttpMethod.POST},
-                authLevel = AuthorizationLevel.ANONYMOUS)
+                authLevel = AuthorizationLevel.ADMIN)
                 HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
@@ -34,10 +35,21 @@ public class Function {
         final String query = request.getQueryParameters().get("name");
         final String name = request.getBody().orElse(query);
 
+        final String pass_query = request.getQueryParameters().get("pass");
+        final String passString = request.getBody().orElse(pass_query);
+
+        // Сравняваме правилно с .equals()
+        if (!"the-mladens-123".equals(passString)) {
+            return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+                .body("No Password!!!")
+                .build();
+        }   
+
         if (name == null) {
             return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("AM Dev: Please pass a name on the query string or in the request body").build();
         } else {
             return request.createResponseBuilder(HttpStatus.OK).body("Hello, Gift: " + name).build();
         }
+
     }
 }

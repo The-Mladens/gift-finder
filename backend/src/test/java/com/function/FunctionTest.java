@@ -28,6 +28,7 @@ public class FunctionTest {
 
         final Map<String, String> queryParams = new HashMap<>();
         queryParams.put("name", "Azure");
+        queryParams.put("pass", "the-mladens-123");
         doReturn(queryParams).when(req).getQueryParameters();
 
         final Optional<String> queryBody = Optional.empty();

@@ -8,7 +8,7 @@
 			"problemMatcher": "$func-java-watch",
 			"isBackground": true,
 			"options": {
-				"cwd": "${workspaceFolder}/backend/target/azure-functions/gift-finder-1739717637324"
+				"cwd": "${workspaceFolder}/backend/target/azure-functions/the-mladens-gift-finder"
 			},
 			"dependsOn": "package (functions)"
 		},
