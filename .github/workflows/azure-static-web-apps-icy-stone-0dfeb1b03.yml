@@ -1,4 +1,4 @@
-name: Deploy Azure Static Web App - Prod
+name: SWA - Prod
 
 on:
   push:
