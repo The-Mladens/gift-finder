@@ -43,6 +43,7 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
+          # yamllint disable-line rule:truthy
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_84D4C3D5C4C540F9BEFBBE0FC5F2B94F }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_69ED6E8C89D6446095DBE783F68EAC51 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6D309E59AFFD4408BAF36F450FDB8600 }}
