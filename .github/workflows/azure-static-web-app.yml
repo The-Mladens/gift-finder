@@ -1,4 +1,4 @@
-name: Deploy Azure Static Web App - Dev
+name: SWA - Dev
 
 on:
   push:
