@@ -2,40 +2,43 @@
 <!-- !!Please note that upon loading/saving this sandbox - the property values applied will not be applied without a RESTART!! -->
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="./src/styles.css" />
-  </head>
-  <script
-    type="module"
-    src="https://unpkg.com/deep-chat@2.1.1/dist/deepChat.bundle.js"
-  ></script>
-  <body>
-    <h1>Dev Chat</h1>
+    <!-- <link rel="stylesheet" href="./src/styles.css" /> -->
+</head>
+<script type="module" src="https://unpkg.com/deep-chat@2.1.1/dist/deepChat.bundle.js"></script>
+
+<body>
+    <h1>Chat AM</h1>
     <!-- Attributes can be set as strings either directly on the element (demo/textInput) or via a `setAttribute` method on its reference (introMessage).
       When passing JSON objects make sure that they are first correctly stringified (use the following tool https://jsonlint.com/), functions assigned
       to properties must not have external references and all regex values are properly escaped.
       You can also pass values into the component via properties by using the element reference (history).
       -->
-    <deep-chat
-      id="chat-element"
-      demo="true"
-      textInput='{"placeholder":{"text": "Welcome to the Dev 1 demo!"}}'
-    ></deep-chat>
-  </body>
-  <!-- !!Either set the script as "module" or place your code in a timeout in order to wait for the component to load -->
-  <script type="module">
+        <!-- "url": "https://mlad-am-azure-functions-test.azurewebsites.net/api/MessageFunctionTest"}' -->
+    <deep-chat id="chat-element" 
+        connect='{
+        "url": "http://localhost:7071/api/MessageFunctionTest"}'
+        textInput='{"placeholder":{"text": "Welcome to the demo!"}}'
+        style="border-radius: 10px; position: fixed; bottom: 0%; right: 0%; z-index: 1"></deep-chat>
+
+    <main>
+        <p>Loading content from the API: <b id="name">...</b></p>
+    </main>
+
+
+</body>
+<!-- !!Either set the script as "module" or place your code in a timeout in order to wait for the component to load -->
+<script type="module">
     const elementRef = document.getElementById("chat-element");
     // Setting value via a property (easiest way)
-    elementRef.history = [
-      { role: "user", text: "Hey, how are you today?" },
-      { role: "ai", text: "I am doing very well!" },
-    ];
     elementRef.setAttribute(
-      "introMessage",
-      JSON.stringify({
-        text: "JavaScript demo for the Deep Chat component.",
-      })
+        "introMessage",
+        JSON.stringify({
+            text: "JavaScript demo for the Deep Chat component.",
+        })
     );
-  </script>
+</script>
+
 </html>
