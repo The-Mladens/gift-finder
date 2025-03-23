@@ -11,34 +11,57 @@
 
 <body>
     <h1>Chat AM</h1>
+
+    <!-- Текстов контрол за въвеждане на secretKey -->
+    <div style="margin-bottom: 20px;">
+        <label for="secretKeyInput">Secret Key:</label>
+        <input type="text" id="secretKeyInput" placeholder="Enter your secret key" value="the-mladens" />
+    </div>
+
     <!-- Attributes can be set as strings either directly on the element (demo/textInput) or via a `setAttribute` method on its reference (introMessage).
       When passing JSON objects make sure that they are first correctly stringified (use the following tool https://jsonlint.com/), functions assigned
       to properties must not have external references and all regex values are properly escaped.
       You can also pass values into the component via properties by using the element reference (history).
       -->
-        <!-- "url": "https://mlad-am-azure-functions-test.azurewebsites.net/api/MessageFunctionTest"}' -->
-    <deep-chat id="chat-element" 
-        connect='{
-        "url": "http://localhost:7071/api/MessageFunctionTest"}'
-        textInput='{"placeholder":{"text": "Welcome to the demo!"}}'
+    <deep-chat id="chat-element" textInput='{"placeholder":{"text": "Welcome to the demo!"}}'
         style="border-radius: 10px; position: fixed; bottom: 0%; right: 0%; z-index: 1"></deep-chat>
 
     <main>
         <p>Loading content from the API: <b id="name">...</b></p>
     </main>
 
-
 </body>
 <!-- !!Either set the script as "module" or place your code in a timeout in order to wait for the component to load -->
 <script type="module">
-    const elementRef = document.getElementById("chat-element");
-    // Setting value via a property (easiest way)
-    elementRef.setAttribute(
-        "introMessage",
-        JSON.stringify({
-            text: "JavaScript demo for the Deep Chat component.",
-        })
-    );
+    import { CONFIG } from './config.js';
+
+    const chatElement = document.getElementById('chat-element');
+    const secretKeyInput = document.getElementById("secretKeyInput");
+
+    // Задаване на URL от CONFIG
+    //chatElement.url = CONFIG.apiUrl;
+    const Url = CONFIG.apiUrl;
+    chatElement.setAttribute('connect', JSON.stringify({
+        url: Url
+    }));
+
+    const chatComponent = document.getElementById('chat-element');
+    chatComponent.setAttribute('url', 'http://localhost:7071/api/MessageFunctionTest');
+
+    chatElement.requestInterceptor = (requestDetails) => {
+        console.log("Original Request Details:", requestDetails);
+
+        // Добавяне на допълнителни данни към заявката
+        requestDetails.body = {
+            ...requestDetails.body, // Запазване на оригиналните данни
+            sk: secretKeyInput.value, // Използване на стойността от конфигурацията
+        };
+
+        console.log("Modified Request Details:", requestDetails);
+        return requestDetails;
+    };
+
 </script>
+
 
 </html>
