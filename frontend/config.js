@@ -2,6 +2,6 @@ const isProduction = window.location.hostname !== "localhost" && window.location
 
 export const CONFIG = {
     apiUrl: isProduction
-        ? "the-mladens-gift-finder-dev.azurewebsites.net/api/MessageFunctionTest"
+        ? "https://the-mladens-gift-finder-dev.azurewebsites.net/api/MessageFunctionTest"
         : "http://localhost:7071/api/MessageFunctionTest",
 };
