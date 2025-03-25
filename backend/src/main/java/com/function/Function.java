@@ -11,6 +11,7 @@ import com.microsoft.azure.functions.annotation.HttpTrigger;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.sql.SQLException;
 import java.util.Objects;
@@ -87,16 +88,26 @@ public class Function {
                 var futureChat = openAI.chatCompletions().create(chatRequest);
                 var chatResponse = futureChat.join();
 
-                /*
-                 * chatElementRef.requestInterceptor = (requestDetails) => {
-                 * console.log(requestDetails); // printed above
-                 * requestDetails.body = {prompt: requestDetails.body.messages[0].text}; //
-                 * custom body
-                 * return requestDetails;
-                 * };
-                 */
-                // Manually construct the JSON response string without using ObjectMapper.
-                String jsonResponse = "{\"role\": \"ai\", \"text\": \"" + chatResponse.firstContent() + "\"}";
+                // Construct the JSON response using ObjectMapper.
+                ObjectMapper responseMapper = new ObjectMapper();
+                ObjectNode jsonResponseNode = responseMapper.createObjectNode();
+                jsonResponseNode.put("role", "ai");
+                jsonResponseNode.put("text", chatResponse.firstContent());
+                String jsonResponse;
+                try {
+                                jsonResponse = responseMapper.writeValueAsString(jsonResponseNode);
+                } catch (JsonProcessingException e) {
+                                context.getLogger().severe("Failed to construct JSON response: " + e.getMessage());
+                                return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
+                                                                .body("Error constructing JSON response")
+                                                                .build();
+                }
+
+                try {
+                    DbClient.insertChatCompletion(text, chatResponse.firstContent());
+                } catch (SQLException e) {
+                    context.getLogger().severe("Failed to save chat completion: " + e.getMessage());
+                }
 
                 String name = "Alice1";
                 String email = "alice1@example.com";
