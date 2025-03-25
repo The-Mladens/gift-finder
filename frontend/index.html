@@ -46,7 +46,6 @@
     }));
 
     const chatComponent = document.getElementById('chat-element');
-    chatComponent.setAttribute('url', 'http://localhost:7071/api/MessageFunctionTest');
 
     chatElement.requestInterceptor = (requestDetails) => {
         console.log("Original Request Details:", requestDetails);
