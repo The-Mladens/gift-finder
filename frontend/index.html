@@ -26,9 +26,6 @@
     <deep-chat id="chat-element" textInput='{"placeholder":{"text": "Welcome to the demo!"}}'
         style="border-radius: 10px; position: fixed; bottom: 0%; right: 0%; z-index: 1"></deep-chat>
 
-    <main>
-        <p>Loading content from the API: <b id="name">...</b></p>
-    </main>
 
 </body>
 <!-- !!Either set the script as "module" or place your code in a timeout in order to wait for the component to load -->
@@ -39,7 +36,6 @@
     const secretKeyInput = document.getElementById("secretKeyInput");
 
     // Задаване на URL от CONFIG
-    //chatElement.url = CONFIG.apiUrl;
     const Url = CONFIG.apiUrl;
     chatElement.setAttribute('connect', JSON.stringify({
         url: Url
@@ -49,7 +45,6 @@
 
     chatElement.requestInterceptor = (requestDetails) => {
         console.log("Original Request Details:", requestDetails);
-
         // Добавяне на допълнителни данни към заявката
         requestDetails.body = {
             ...requestDetails.body, // Запазване на оригиналните данни
