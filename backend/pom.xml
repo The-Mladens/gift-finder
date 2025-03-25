@@ -56,6 +56,12 @@
             <artifactId>simple-openai</artifactId>
             <version>3.19.0</version>
         </dependency>
+        <dependency>
+            <!-- postgresql -->
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.2</version>
+        </dependency>
     </dependencies>
 
     <build>
