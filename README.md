@@ -37,23 +37,81 @@ The system consists of the following main components:
 
 ---
 
-## Architecture Diagram
+## Sequence Diagram
 
-```plaintext
-+-------------------+       +-----------------------+
-|   User/Client     |       |  Azure Resource Group |
-|-------------------|       |-----------------------|
-|                   |       | +-------------------+ |
-| Azure Static Web  +------->| Azure Function App  | |
-|       App         |       | +-------------------+ |
-|                   |       |         |             |
-+-------------------+       |         v             |
-                             | +-------------------+ |
-                             | | PostgreSQL DB     | |
-                             | +-------------------+ |
-                             |         |             |
-                             |         v             |
-                             | +-------------------+ |
-                             | | OpenAI API        | |
-                             | +-------------------+ |
-                             +-----------------------+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Frontend as Azure Static Web App
+    participant Backend as Azure Function App
+    participant DB as PostgreSQL Database
+    participant AI as OpenAI API
+
+    User->>Frontend: Enter gift search criteria
+    Frontend->>Backend: POST /api/gift-recommendations
+    Backend->>DB: Log user request
+    Backend->>AI: Send request for gift recommendations
+    AI-->>Backend: Return AI-generated suggestions
+    Backend->>DB: Store chat completion
+    Backend-->>Frontend: Return gift recommendations
+    Frontend-->>User: Display recommendations
+```
+
+### Flow Description
+
+1. **Initial Request**
+   - User enters search criteria through the web interface
+   - Frontend validates and formats the input
+
+2. **Backend Processing**
+   - Azure Function App receives the HTTP request
+   - Validates request parameters
+   - Logs the incoming request to PostgreSQL
+
+3. **AI Integration**
+   - Backend formats the request for OpenAI API
+   - Sends request to OpenAI
+   - Receives AI-generated recommendations
+
+4. **Response Handling**
+   - Backend stores the chat completion in PostgreSQL
+   - Formats the AI response
+   - Returns processed recommendations to frontend
+
+5. **User Interface**
+   - Frontend receives the response
+   - Renders the gift recommendations
+   - Displays them to the user
+
+### Common Scenarios
+
+#### New User Flow
+```mermaid
+sequenceDiagram
+    actor User
+    participant Frontend
+    participant Backend
+    participant DB
+
+    User->>Frontend: Register/Login
+    Frontend->>Backend: POST /api/users
+    Backend->>DB: CALL ad_user_insert
+    DB-->>Backend: Confirmation
+    Backend-->>Frontend: User created
+    Frontend-->>User: Welcome message
+```
+
+#### Gift Search Flow
+```mermaid
+sequenceDiagram
+    actor User
+    participant Frontend
+    participant Backend
+    participant AI
+
+    User->>Frontend: Search for gift
+    Frontend->>Backend: POST /api/chat-completion
+    Backend->>AI: Generate recommendations
+    AI-->>Backend: Gift suggestions
+    Backend-->>Frontend: Formatted response
+    Frontend-->>User: Display results
