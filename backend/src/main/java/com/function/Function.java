@@ -77,10 +77,23 @@ public class Function {
                                 // .apiKey(System.getenv("OPENAI_API_KEY"))
                                 .apiKey(apiKey)
                                 .build();
+
+                String userInfo = null;
+                try {
+                    userInfo = DbClient.getSystemMessage(secretKey);
+                } catch (SQLException e) {
+                    context.getLogger().severe("Failed to retrieve user info: " + e.getMessage());
+                }
+
+                // Use userInfo in the SystemMessage if available
+                var systemMessage = userInfo != null
+                    ? SystemMessage.of("Говори на български. Аз съм " + userInfo + ".")
+                    : SystemMessage.of("Говори на български.");
+
                 // Изпращане на заявка към OpenAI
                 var chatRequest = ChatRequest.builder()
                                 .model("gpt-4o-mini")
-                                .message(SystemMessage.of("You are an expert in AI."))
+                                .message(systemMessage)
                                 .message(UserMessage.of(text))
                                 .temperature(0.5)
                                 .maxCompletionTokens(100)

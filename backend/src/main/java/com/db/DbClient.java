@@ -32,4 +32,23 @@ public class DbClient {
             }
         }
     }
+
+    public static String getSystemMessage(String secretKey) throws SQLException {
+        String url = System.getenv("DB_URL");
+        String user = System.getenv("DB_USER");
+        String password = System.getenv("DB_PASSWORD");
+
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "SELECT getSystemMessage(?) AS message";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, secretKey);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getString("message");
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

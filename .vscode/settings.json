@@ -5,5 +5,22 @@
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.preDeployTask": "package (functions)",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "dbcode.connections": [
+        {
+            "connectionId": "3nQAlw8aXJ0JGQc0UI8ge",
+            "name": "giftfinder_db",
+            "driver": "postgres",
+            "connectionType": "host",
+            "host": "giftfinderpgsrv.postgres.database.azure.com",
+            "port": 5432,
+            "ssl": false,
+            "username": "the_mladens_admin",
+            "password": "",
+            "savePassword": "secretStorage",
+            "database": "giftfinder_db",
+            "readOnly": false,
+            "connectionTimeout": 30
+        }
+    ]
 }
