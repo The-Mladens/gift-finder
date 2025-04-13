@@ -1,0 +1,61 @@
+erDiagram
+
+    md_question_topic_template {
+        int id PK
+        int seq_no
+        text name
+        text system_question
+        text system_prompt
+        text system_check_prompt
+        text confirmation_question
+        jsonb response_structure
+    }
+
+    md_question_topic_element_template {
+        int id PK
+        int md_topic_template_id FK
+        int seq_no
+        text name
+        text extraction_question
+    }
+
+    od_user {
+        int id PK
+        text name
+        text email
+        text secret_key
+        int remaining_requests
+    }
+
+    od_conversation {
+        int id PK
+        int od_user_id FK
+        text name
+        timestamp started_at
+        timestamp ended_at
+    }
+
+    od_conversation_topic {
+        int id PK
+        int od_conversation_id FK
+        int md_topic_template_id FK
+        text user_response
+        jsonb structured_response
+        text status
+    }
+
+    od_communication {
+        int id PK
+        int od_conversation_topic_id FK
+        timestamp started_at
+        text system_prompt
+        text user_response
+        int processing_duration_ms
+        jsonb llm_result
+    }
+
+    md_question_topic_template ||--o{ md_question_topic_element_template : "has elements"
+    md_question_topic_template ||--o{ od_conversation_topic : "used in"
+    od_user ||--o{ od_conversation : "starts"
+    od_conversation ||--o{ od_conversation_topic : "contains topics"
+    od_conversation_topic ||--o{ od_communication : "has communications"
