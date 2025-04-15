@@ -40,3 +40,4 @@ obj/
 
 # Secrets
 secrets*.*
+*.env

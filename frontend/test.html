@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Web Components - REST List</title>
+    <!-- Material Design CSS -->
+    <script type="module" src="https://esm.run/@material/web@1.3.0/all.js"></script>
+
+    <style>
+        :root {
+            --md-list-container-color: #e8f5e9;
+            /* Modern light green background */
+            --md-list-item-label-text-color: #1b5e20;
+            /* Rich dark green text */
+            --md-list-item-supporting-text-color: #388e3c;
+            /* Vibrant green text */
+            --md-list-item-trailing-supporting-text-color: #388e3c;
+            /* Vibrant green text */
+            --md-list-item-label-text-font: system-ui;
+            --md-list-item-supporting-text-font: system-ui;
+            --md-list-item-trailing-supporting-text-font: system-ui;
+            --md-elevation-level: 5;
+            --md-sys-color-shadow: #006A6A;
+        }
+
+        [slot="trailing-supporting-text"] {
+            width: 30px;
+            text-align: end;
+        }
+
+        .surface {
+            border-radius: 16px;
+            max-height: 400px;
+            width: 600px;
+            margin: auto;
+            overflow: auto;
+            /* Добавя скрол, ако съдържанието надвишава размера */
+        }
+
+        .selected {
+            width: 600px;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>REST API Data Loaded in md-list</h2>
+
+    <div class="selected">
+        <md-filled-select class="selected">
+            <md-select-option aria-label="blank"></md-select-option>
+            <md-select-option value="apple">
+                <div slot="headline">Apple</div>
+            </md-select-option>
+            <md-select-option value="apricot">
+                <div slot="headline">Apricot</div>
+            </md-select-option>
+        </md-filled-select>
+    </div>
+
+    <!-- Custom Web Component Usage -->
+    <div class="surface">
+        <api-list data-src="https://jsonplaceholder.typicode.com/users"></api-list>
+    </div>
+
+    <script type="module">
+
+        class ApiList extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+                this.shadowRoot.innerHTML = `
+                        <md-list></md-list>
+                `;
+            }
+
+            connectedCallback() {
+                const url = this.getAttribute('data-src');
+                if (url) {
+                    this.loadData(url);
+                }
+            }
+
+            async loadData(url) {
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+
+                    const list = this.shadowRoot.querySelector('md-list');
+                    data.forEach((item, index) => {
+                        const listItem = document.createElement('md-list-item');
+                        listItem.textContent = item.name;
+
+                        // Add ripple effect
+                        const ripple = document.createElement('md-ripple');
+                        listItem.appendChild(ripple);
+
+                        const supportingText = document.createElement('span');
+                        supportingText.setAttribute('slot', 'supporting-text');
+                        supportingText.textContent = `Email: ${item.email}`; // Additional text
+                        listItem.appendChild(supportingText);
+
+                        list.appendChild(listItem);
+
+                        // Add a divider after each item except the last one
+                        if (index < data.length - 1) {
+                            const divider = document.createElement('md-divider');
+                            list.appendChild(divider);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                }
+            }
+        }
+
+        customElements.define('api-list', ApiList);
+    </script>
+
+</body>
+
+</html>

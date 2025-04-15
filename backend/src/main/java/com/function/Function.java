@@ -60,6 +60,16 @@ public class Function {
                                         .build();
                 }
 
+                // Use the new utility method for inserting a user
+                try {
+                        UserDbOperations.insertUser("Ivan", "ivan@example.com", "secret123", 10);
+                } catch (RuntimeException e) {
+                        context.getLogger().severe(e.getMessage());
+                        return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .body("Database operation error")
+                                        .build();
+                }
+
                 String mySecretKey = System.getenv("MY_SECRET_KEY");
                 mySecretKey = Objects.requireNonNullElse(mySecretKey, "test-key");
 
@@ -80,15 +90,15 @@ public class Function {
 
                 String userInfo = null;
                 try {
-                    userInfo = DbClient.getSystemMessage(secretKey);
+                        userInfo = DbClient.getSystemMessage(secretKey);
                 } catch (SQLException e) {
-                    context.getLogger().severe("Failed to retrieve user info: " + e.getMessage());
+                        context.getLogger().severe("Failed to retrieve user info: " + e.getMessage());
                 }
 
                 // Use userInfo in the SystemMessage if available
                 var systemMessage = userInfo != null
-                    ? SystemMessage.of("Говори на български. Аз съм " + userInfo + ".")
-                    : SystemMessage.of("Говори на български.");
+                                ? SystemMessage.of("Говори на български. Аз съм " + userInfo + ".")
+                                : SystemMessage.of("Говори на български.");
 
                 // Изпращане на заявка към OpenAI
                 var chatRequest = ChatRequest.builder()
@@ -108,27 +118,13 @@ public class Function {
                 jsonResponseNode.put("text", chatResponse.firstContent());
                 String jsonResponse;
                 try {
-                                jsonResponse = responseMapper.writeValueAsString(jsonResponseNode);
+                        jsonResponse = responseMapper.writeValueAsString(jsonResponseNode);
                 } catch (JsonProcessingException e) {
-                                context.getLogger().severe("Failed to construct JSON response: " + e.getMessage());
-                                return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
-                                                                .body("Error constructing JSON response")
-                                                                .build();
+                        context.getLogger().severe("Failed to construct JSON response: " + e.getMessage());
+                        return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .body("Error constructing JSON response")
+                                        .build();
                 }
-
-                try {
-                    DbClient.insertChatCompletion(text, chatResponse.firstContent());
-                } catch (SQLException e) {
-                    context.getLogger().severe("Failed to save chat completion: " + e.getMessage());
-                }
-
-                String name = "Alice1";
-                String email = "alice1@example.com";
-                try {
-                        DbClient.insertUser(name, email);
-                } catch (SQLException e) {
-                        context.getLogger().severe(e.getMessage());
-                };
 
                 return request.createResponseBuilder(HttpStatus.OK)
                                 .header("Content-Type", "application/json")
