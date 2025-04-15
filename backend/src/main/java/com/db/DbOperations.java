@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import com.example.jooq.generated.Tables;
 
-public class UserDbOperations {
+public class DbOperations {
 
     public static void insertUser(String name, String email, String secretKey, int remainingRequests) {
         try (Connection conn = PgDataSource.getDataSource().getConnection()) {
@@ -22,4 +22,5 @@ public class UserDbOperations {
             throw new RuntimeException("Database operation error: " + e.getMessage(), e);
         }
     }
+
 }

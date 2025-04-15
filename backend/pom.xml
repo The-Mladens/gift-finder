@@ -73,6 +73,31 @@
     <build>
         <directory>target</directory>
         <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>run-powershell-script</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>powershell</executable>
+                            <arguments>
+                                <argument>-ExecutionPolicy</argument>
+                                <argument>Bypass</argument>
+                                <argument>-File</argument>
+                                <argument>${project.basedir}/secrets-jooq-generate-sources.ps1</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -152,8 +177,8 @@
                 <version>3.18.0</version>
                 <executions>
                     <execution>
-                        <id>generate-jooq</id>
-                        <phase>generate-sources</phase>
+                        <id>default</id>
+                        <phase>generate-sources</phase> <!-- Автоматично стартиране при фазата generate-sources -->
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -161,13 +186,10 @@
                 </executions>
                 <configuration>
                     <jdbc>
-                        <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql://giftfinderpgsrv.postgres.database.azure.com:5432/giftfinder_db</url>
-                        <user>the_mladens_admin</user>
-                        <password>the-mladens-123-db</password>
-                        <!-- <url>${env.DB_URL}</url>
-                        <user>${env.DB_USER}</user>
-                        <password>${env.DB_PASSWORD}</password> -->
+                        <!-- <driver>org.postgresql.Driver</driver>
+                        <url>${env.PG_URL}</url>
+                        <user>${env.PG_USER}</user>
+                        <password>${env.PG_PASS}</password> -->
                     </jdbc>
                     <generator>
                         <database>
@@ -175,6 +197,12 @@
                             <includes>.*</includes> <!-- или конкретни таблици -->
                             <inputSchema>public</inputSchema>
                         </database>
+                        <generate>
+                            <pojos>true</pojos>                 <!-- включи POJO класове -->
+                            <daos>true</daos>                  <!-- по избор -->
+                            <relations>true</relations>
+                            <fluentSetters>true</fluentSetters> <!-- по избор -->
+                        </generate>
                         <target>
                             <packageName>com.example.jooq.generated</packageName>
                             <directory>target/generated-sources/jooq</directory>

@@ -13,9 +13,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 
 import io.github.sashirestela.openai.SimpleOpenAI;
 import io.github.sashirestela.openai.domain.chat.ChatMessage.SystemMessage;
@@ -23,6 +28,7 @@ import io.github.sashirestela.openai.domain.chat.ChatMessage.UserMessage;
 import io.github.sashirestela.openai.domain.chat.ChatRequest;
 
 import com.db.*;
+import com.example.jooq.generated.tables.pojos.MdQuestionTopicTemplate;
 
 public class Function {
 
@@ -60,25 +66,40 @@ public class Function {
                                         .build();
                 }
 
-                // Use the new utility method for inserting a user
-                try {
-                        UserDbOperations.insertUser("Ivan", "ivan@example.com", "secret123", 10);
-                } catch (RuntimeException e) {
-                        context.getLogger().severe(e.getMessage());
-                        return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
-                                        .body("Database operation error")
-                                        .build();
-                }
-
                 String mySecretKey = System.getenv("MY_SECRET_KEY");
                 mySecretKey = Objects.requireNonNullElse(mySecretKey, "test-key");
 
-                // Сравняваме secretKey правилно с .equals()
+                // Проверяваме secretKey
                 if (!mySecretKey.equals(secretKey)) {
                         return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
                                         .body("Error 101")
                                         .build();
                 }
+
+                // Създаване на връзка с базата данни
+                Connection conn;
+                DSLContext dslContext = null;
+                try {
+                        conn = PgDataSource.getConnection();
+                        dslContext = DSL.using(conn); // Establishing the connection without assigning to a variable
+                } catch (SQLException e) {
+                        context.getLogger().severe("Failed to establish database connection: " + e.getMessage());
+                        return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .body("Database connection error")
+                                        .build();
+                }
+
+                // Извличане на темите за анализ
+                // Explicitly map the result to the POJO using fetchInto
+                List<MdQuestionTopicTemplate> templates = dslContext
+                                .selectFrom(com.example.jooq.generated.tables.MdQuestionTopicTemplate.MD_QUESTION_TOPIC_TEMPLATE)
+                                .fetchInto(MdQuestionTopicTemplate.class);
+                                
+                String  systemMessageTxt = null;
+                for (MdQuestionTopicTemplate template : templates) {
+                        systemMessageTxt = systemMessageTxt + template.getSystemPrompt();
+                }
+                SystemMessage  systemMessage = SystemMessage.of(systemMessageTxt);
 
                 String apiKey = System.getenv("OPENAI_API_KEY");
 
@@ -87,18 +108,6 @@ public class Function {
                                 // .apiKey(System.getenv("OPENAI_API_KEY"))
                                 .apiKey(apiKey)
                                 .build();
-
-                String userInfo = null;
-                try {
-                        userInfo = DbClient.getSystemMessage(secretKey);
-                } catch (SQLException e) {
-                        context.getLogger().severe("Failed to retrieve user info: " + e.getMessage());
-                }
-
-                // Use userInfo in the SystemMessage if available
-                var systemMessage = userInfo != null
-                                ? SystemMessage.of("Говори на български. Аз съм " + userInfo + ".")
-                                : SystemMessage.of("Говори на български.");
 
                 // Изпращане на заявка към OpenAI
                 var chatRequest = ChatRequest.builder()

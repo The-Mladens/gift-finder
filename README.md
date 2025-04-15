@@ -22,6 +22,15 @@ The system consists of the following main components:
   - It handles requests from the frontend, processes data, and interacts with the database and OpenAI API.
   - The backend is designed to scale automatically based on demand.
 
+### 2.1 Database Access Approach
+
+This project uses **jOOQ** as the primary framework for database access and query generation. jOOQ provides a fluent API for building type-safe SQL queries, ensuring compile-time validation of database interactions.
+
+### 2.1.1 Tools and Frameworks
+- **jOOQ**: Used for generating and executing SQL queries in a type-safe manner.
+- **HikariCP**: A high-performance JDBC connection pool for managing database connections efficiently.
+- **PostgreSQL**: The database system used in this project.
+
 ### 3. **Database**
 - **Technology**: PostgreSQL (hosted on Azure Database for PostgreSQL)
 - **Description**:
