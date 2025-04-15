@@ -75,30 +75,6 @@
         <plugins>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>run-powershell-script</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>powershell</executable>
-                            <arguments>
-                                <argument>-ExecutionPolicy</argument>
-                                <argument>Bypass</argument>
-                                <argument>-File</argument>
-                                <argument>${project.basedir}/secrets-jooq-generate-sources.ps1</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
@@ -190,6 +166,10 @@
                         <url>${env.PG_URL}</url>
                         <user>${env.PG_USER}</user>
                         <password>${env.PG_PASS}</password> -->
+                        <url>
+                            jdbc:postgresql://giftfinderpgsrv.postgres.database.azure.com:5432/giftfinder_db</url>
+                        <user>the_mladens_admin</user>
+                        <password>the-mladens-123-db</password>
                     </jdbc>
                     <generator>
                         <database>
