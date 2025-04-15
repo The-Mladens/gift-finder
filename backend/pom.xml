@@ -166,10 +166,6 @@
                         <url>${env.PG_URL}</url>
                         <user>${env.PG_USER}</user>
                         <password>${env.PG_PASS}</password> -->
-                        <url>
-                            jdbc:postgresql://giftfinderpgsrv.postgres.database.azure.com:5432/giftfinder_db</url>
-                        <user>the_mladens_admin</user>
-                        <password>the-mladens-123-db</password>
                     </jdbc>
                     <generator>
                         <database>
