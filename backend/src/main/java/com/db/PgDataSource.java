@@ -31,4 +31,12 @@ public class PgDataSource {
     public static Connection getConnection() throws SQLException {
         return PgDataSource.getDataSource().getConnection();
     }
+
+    public static Connection getConnectionSafely() {
+        try {
+            return getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to establish database connection", e);
+        }
+    }
 }

@@ -21,6 +21,8 @@ import java.util.Optional;
 import static com.generated_jooq.tables.MdQuestionTopicTemplate.MD_QUESTION_TOPIC_TEMPLATE;
 
 import org.jooq.DSLContext;
+import org.jooq.Result;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import io.github.sashirestela.openai.SimpleOpenAI;
@@ -30,6 +32,7 @@ import io.github.sashirestela.openai.domain.chat.ChatRequest;
 
 import com.db.*;
 import com.generated_jooq.tables.pojos.MdQuestionTopicTemplate;
+import com.db.SecretKeyValidator;
 
 public class Function {
 
@@ -70,36 +73,38 @@ public class Function {
                 String mySecretKey = System.getenv("MY_SECRET_KEY");
                 mySecretKey = Objects.requireNonNullElse(mySecretKey, "test-key");
 
-                // Проверяваме secretKey
-                if (!mySecretKey.equals(secretKey)) {
-                        return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
-                                        .body("Error 101")
-                                        .build();
-                }
-
                 // Създаване на връзка с базата данни
                 Connection conn;
-                DSLContext dslContext = null;
+                conn = PgDataSource.getConnectionSafely();
+
+                // Validate the secret key using the new SecretKeyValidator class
+                boolean isValidKey;
                 try {
-                        conn = PgDataSource.getConnection();
-                        dslContext = DSL.using(conn); // Establishing the connection without assigning to a variable
+                    isValidKey = SecretKeyValidator.validateSecretKey(secretKey, conn);
                 } catch (SQLException e) {
-                        context.getLogger().severe("Failed to establish database connection: " + e.getMessage());
-                        return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
-                                        .body("Database connection error")
-                                        .build();
+                    context.getLogger().severe("Database error: " + e.getMessage());
+                    return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
+                                    .body("Database error")
+                                    .build();
                 }
 
-                // Извличане на темите за анализ
-                // Explicitly map the result to the POJO using fetchInto
-                List<MdQuestionTopicTemplate> templates = dslContext
-                                .selectFrom(MD_QUESTION_TOPIC_TEMPLATE)
-                                .fetchInto(MdQuestionTopicTemplate.class);
-                                
-                String  systemMessageTxt = null;
-                for (MdQuestionTopicTemplate template : templates) {
-                        systemMessageTxt = systemMessageTxt + template.getSystemPrompt();
+                if (!isValidKey) {
+                    return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+                                    .body("Невалиден ключ")
+                                    .build();
                 }
+
+                // Create a DSLContext for interacting with the database using the connection
+                DSLContext dslContext = null;
+                dslContext = DSL.using(conn);
+
+                // Извличане на темите за анализ
+                Result<Record> result = dslContext.select().from(MD_QUESTION_TOPIC_TEMPLATE).fetch();                
+
+                String  systemMessageTxt = null;
+                for (Record r : result) {
+                        systemMessageTxt = systemMessageTxt + r.getValue(MD_QUESTION_TOPIC_TEMPLATE.SYSTEM_PROMPT);
+                    }
                 SystemMessage  systemMessage = SystemMessage.of(systemMessageTxt);
 
                 String apiKey = System.getenv("OPENAI_API_KEY");
