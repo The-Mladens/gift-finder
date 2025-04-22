@@ -4,7 +4,8 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import com.example.jooq.generated.Tables;
+
+import com.generated_jooq.Tables;
 
 public class DbOperations {
 

@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import static com.generated_jooq.tables.MdQuestionTopicTemplate.MD_QUESTION_TOPIC_TEMPLATE;
 
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -28,7 +29,7 @@ import io.github.sashirestela.openai.domain.chat.ChatMessage.UserMessage;
 import io.github.sashirestela.openai.domain.chat.ChatRequest;
 
 import com.db.*;
-import com.example.jooq.generated.tables.pojos.MdQuestionTopicTemplate;
+import com.generated_jooq.tables.pojos.MdQuestionTopicTemplate;
 
 public class Function {
 
@@ -92,7 +93,7 @@ public class Function {
                 // Извличане на темите за анализ
                 // Explicitly map the result to the POJO using fetchInto
                 List<MdQuestionTopicTemplate> templates = dslContext
-                                .selectFrom(com.example.jooq.generated.tables.MdQuestionTopicTemplate.MD_QUESTION_TOPIC_TEMPLATE)
+                                .selectFrom(MD_QUESTION_TOPIC_TEMPLATE)
                                 .fetchInto(MdQuestionTopicTemplate.class);
                                 
                 String  systemMessageTxt = null;
